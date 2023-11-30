@@ -13,7 +13,7 @@ def checkTeammate(name:str, tag:str):
     if f"{name}-{tag}" == bypass:
         print("Skipped.")
         return
-    #每把都是TOP GAP-MDZZ
+        
     username = [name, tag]
 
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
