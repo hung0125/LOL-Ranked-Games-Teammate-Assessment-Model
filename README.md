@@ -5,10 +5,10 @@
 
 ![image](https://github.com/hung0125/LOL-Ranked-Games-Teammate-Assessment-Model/assets/65654501/695d4f56-2fd6-4af9-baf8-31e488059630)
 ### 用例1: 遇到一堆"演員"
-![image](https://github.com/hung0125/LOL-Ranked-Games-Teammate-Assessment-Model/assets/65654501/dc856306-6072-4c9b-80fd-171bb580f6c7)
+![image](https://github.com/hung0125/LOL-Ranked-Games-Teammate-Assessment-Model/assets/65654501/0169f819-5fe2-4b31-b4d1-e83f6cb8bd52)
 *跳離遊戲，減分不減隱分 (2次過後自律休息)
 ### 用例2: 僅有少數混分
-![image](https://github.com/hung0125/LOL-Ranked-Games-Teammate-Assessment-Model/assets/65654501/21e5fdb0-2460-4d80-b5c6-d05a375701c1)
+![image](https://github.com/hung0125/LOL-Ranked-Games-Teammate-Assessment-Model/assets/65654501/291b056e-0d0d-448e-b70d-e36ebb242c63)
 *要求支援，大滾雪球
 
 
