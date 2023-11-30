@@ -4,16 +4,16 @@ import numpy as np
 import traceback
 import os
 
-bypass = "YOUR USER NAME-TAG LINE"
-token = "YOUR RIOT API TOKEN"
-log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs"
+bypass = "你自己的ID-TAG名稱"
+token = "RIOT API TOKEN"
+log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
 def checkTeammate(name:str, tag:str):
     print(f"Checking: {name}#{tag}")
     if f"{name}-{tag}" == bypass:
         print("Skipped.")
         return
-        
+    #每把都是TOP GAP-MDZZ
     username = [name, tag]
 
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
@@ -57,6 +57,7 @@ def checkTeammate(name:str, tag:str):
     api_matches =  "https://sea.api.riotgames.com/lol/match/v5/matches/by-puuid"
     api_match = "https://sea.api.riotgames.com/lol/match/v5/matches"
 
+    #{"puuid":"68Lv5MYrVEo7cwNQdRgj-otlOtqlxLMta1CxOt8krZOldpK95VSz7w36xk2oMbcYq3tAi_QPS12x_w","gameName":"每把都是TOP GAP","tagLine":"MDZZ"}
     account_detail = loads(rq.get(f"{api_account}/{username[0]}/{username[1]}", headers=headers).text)
     puuid = account_detail["puuid"]
     match_ids = loads(rq.get(f"{api_matches}/{puuid}/ids?queue=420&start=0&count=10", headers=headers).text)
@@ -165,7 +166,7 @@ def checkTeammate(name:str, tag:str):
     median_rk = np.median(ranks)
     total_lanewinrate = (lane_wins/(cnt-1)) * 100 
     print(f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 總贏線率: {total_lanewinrate}%", end=" ")
-    if max(mean_rk, median_rk) >= 4:
+    if max(mean_rk, median_rk) >= 4 or total_lanewinrate < 40:
         print("<==!CAUTION!")
 
 def get_latest_modified_json_trace(directory):
@@ -206,8 +207,8 @@ def getUsers():
         print("=" * 50)
 
 def ask():
-    print("1 -> Check teammate | 2 -> Bulk check summoners in ban pick")
-    choice = input("Fcn: ")
+    print("1 -> 檢查個別玩家 | 2 -> 選角即時批量檢查")
+    choice = input("輸入功能代號: ")
     if choice == "1":
         try:
             name = input("Input [name-tag]: ").split("-")
