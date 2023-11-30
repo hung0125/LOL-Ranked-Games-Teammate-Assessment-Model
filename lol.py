@@ -164,11 +164,13 @@ def checkTeammate(name:str, tag:str):
     ranks = np.array(ranks)
     mean_rk = round(np.mean(ranks), 2)
     median_rk = np.median(ranks)
-    total_lanewinrate = (lane_wins/(cnt-1)) * 100 
+    total_lanewinrate = round((lane_wins/(cnt-1)) * 100, 2) 
     print(f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 總贏線率: {total_lanewinrate}%", end=" ")
     if max(mean_rk, median_rk) >= 4 or total_lanewinrate < 40:
         print("<==!CAUTION!")
-
+    else:
+        print()
+        
 def get_latest_modified_json_trace(directory):
     latest_modified_time = 0
     latest_modified_file = None
