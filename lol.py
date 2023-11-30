@@ -5,7 +5,7 @@ import traceback
 import os
 
 bypass = "YOUR USER NAME-TAG LINE"
-token = "RIOT YOUR TOKEN"
+token = "YOUR RIOT API TOKEN"
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs"
 
 def checkTeammate(name:str, tag:str):
