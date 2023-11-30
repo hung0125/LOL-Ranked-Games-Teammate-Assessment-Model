@@ -167,27 +167,6 @@ def checkTeammate(name:str, tag:str):
     print(f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 總贏線率: {total_lanewinrate}%", end=" ")
     if max(mean_rk, median_rk) >= 4:
         print("<==!CAUTION!")
-        
-
-        # print(matchup_scores["UTILITY"])
-        # if dto_target == dto_matchups["UTILITY"][0]:
-        #     print("target: 0", end="")
-        #     if matchup_scores["UTILITY"][0] > matchup_scores["UTILITY"][1]:
-        #         print("--> won")
-        #     else:
-        #         print()
-        # elif dto_target == dto_matchups["UTILITY"][1]:
-        #     print("target: 1", end="")
-        #     if matchup_scores["UTILITY"][1] > matchup_scores["UTILITY"][0]:
-        #         print("--> won")
-        #     else:
-        #         print()
-
-        # for each participant, calculate score, finally get the rank among target's team
-        # Player XX:
-        # Match: W ([rank 1-5/5]) | L (2/5) | W (3/5) | W (1/5) | L (4/5) ...
-        # player YY:
-        # Match: W ([rank 1-5/5]) | L (2/5) | W (3/5) | W (1/5) | L (4/5) ...
 
 def get_latest_modified_json_trace(directory):
     latest_modified_time = 0
