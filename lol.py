@@ -4,8 +4,8 @@ import numpy as np
 import traceback
 import os
 
-bypass = "每把都是TOP GAP-MDZZ"
-token = "RGAPI-b7cafc6c-acdb-4eec-ab0d-0d021ad3dc4d"
+bypass = "YOUR USER NAME-TAG LINE"
+token = "RIOT YOUR TOKEN"
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs"
 
 def checkTeammate(name:str, tag:str):
