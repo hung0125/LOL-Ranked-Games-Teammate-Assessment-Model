@@ -1,2 +1,2 @@
-# LOL-Ranked-Teammate-Assessment-System
+# LOL-Ranked-Teammate-Assessment-System (LRTAM)
 Run on Windows CMD
