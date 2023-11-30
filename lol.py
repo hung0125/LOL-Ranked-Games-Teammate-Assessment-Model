@@ -57,7 +57,6 @@ def checkTeammate(name:str, tag:str):
     api_matches =  "https://sea.api.riotgames.com/lol/match/v5/matches/by-puuid"
     api_match = "https://sea.api.riotgames.com/lol/match/v5/matches"
 
-    #{"puuid":"68Lv5MYrVEo7cwNQdRgj-otlOtqlxLMta1CxOt8krZOldpK95VSz7w36xk2oMbcYq3tAi_QPS12x_w","gameName":"每把都是TOP GAP","tagLine":"MDZZ"}
     account_detail = loads(rq.get(f"{api_account}/{username[0]}/{username[1]}", headers=headers).text)
     puuid = account_detail["puuid"]
     match_ids = loads(rq.get(f"{api_matches}/{puuid}/ids?queue=420&start=0&count=10", headers=headers).text)
