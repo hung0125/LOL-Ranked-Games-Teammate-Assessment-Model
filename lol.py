@@ -4,9 +4,10 @@ import numpy as np
 import traceback
 import os
 from tempfile import gettempdir
+from time import time
 
-bypass = "你的名稱-TAG LINE"
-token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90" # RIOT API token
+bypass = "你的ID-TAG LINE"
+token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90" # Riot API token
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
 def makeHtmlPage(tables:list):
@@ -31,8 +32,9 @@ display:flex;
 </body>
 </html>
 """
-    open(f"{gettempdir()}/lol-team-check.html", "wb").write(template.encode("utf-8"))
-    os.system(f"{gettempdir()}/lol-team-check.html")
+    ts = str(int(time()))
+    open(f"{gettempdir()}/lol-team-check_{ts}.html", "wb").write(template.encode("utf-8"))
+    os.system(f"{gettempdir()}/lol-team-check_{ts}.html")
 
 def checkTeammate(name:str, tag:str, bulkmode:bool):
     print(f"Checking: {name}#{tag}")
