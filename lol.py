@@ -3,18 +3,46 @@ from json import loads, dumps
 import numpy as np
 import traceback
 import os
+from tempfile import gettempdir
 
-bypass = "你自己的ID-TAG名稱"
-token = "RIOT API TOKEN"
+bypass = "你的名稱-TAG LINE"
+token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90"
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
-def checkTeammate(name:str, tag:str):
+def makeHtmlPage(tables:list):
+    tbs = ""
+    for T in tables:
+        tbs += T
+    template = """
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+  margin: 2px
+}
+div {
+display:flex;
+}
+</style>
+<body>
+<div>
+""" + tbs + """
+</div>
+</body>
+</html>
+"""
+    open(f"{gettempdir()}/lol-team-check.html", "wb").write(template.encode("utf-8"))
+    os.system(f"{gettempdir()}/lol-team-check.html")
+
+def checkTeammate(name:str, tag:str, bulkmode:bool):
     print(f"Checking: {name}#{tag}")
-    if f"{name}-{tag}" == bypass:
+    if f"{name}-{tag}" == bypass and bulkmode:
         print("Skipped.")
-        return
+        return ""
     #每把都是TOP GAP-MDZZ
     username = [name, tag]
+    html_rows = f'''<table><tr><td colspan="6"><a href='https://www.op.gg/summoners/tw/{name}-{tag}'>{name}-{tag}</a></td></tr>
+    <tr><th>#</th><th>W/L</th><th>KDA</th><th>英雄</th><th>同隊排名</th><th>線路優勢</th></tr>'''
 
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
     score_weighting = { 
@@ -57,9 +85,12 @@ def checkTeammate(name:str, tag:str):
     api_matches =  "https://sea.api.riotgames.com/lol/match/v5/matches/by-puuid"
     api_match = "https://sea.api.riotgames.com/lol/match/v5/matches"
 
-    #{"puuid":"68Lv5MYrVEo7cwNQdRgj-otlOtqlxLMta1CxOt8krZOldpK95VSz7w36xk2oMbcYq3tAi_QPS12x_w","gameName":"每把都是TOP GAP","tagLine":"MDZZ"}
     account_detail = loads(rq.get(f"{api_account}/{username[0]}/{username[1]}", headers=headers).text)
-    puuid = account_detail["puuid"]
+    try:
+        puuid = account_detail["puuid"]
+    except:
+        print(account_detail)
+        return ""
     match_ids = loads(rq.get(f"{api_matches}/{puuid}/ids?queue=420&start=0&count=10", headers=headers).text)
 
     print(match_ids)
@@ -109,7 +140,7 @@ def checkTeammate(name:str, tag:str):
                 matchup_scores[pos][1] += scr_B
         # VS all
         for metric in metrics_1v9:
-            sum_val = 0
+            all_vals = []
             for p in dto_participant:
                 val = 0
                 if metric in challenge_metrics:
@@ -117,9 +148,9 @@ def checkTeammate(name:str, tag:str):
                         val = p["challenges"][metric]
                 else:
                     val = p[metric]
-                sum_val += val
+                all_vals.append(val)
 
-            avg_val = sum_val/10
+            median_val = np.median(np.array(all_vals))
 
             for pos in positions:
                 val_A = 0
@@ -134,8 +165,8 @@ def checkTeammate(name:str, tag:str):
                     val_B = dto_matchups[pos][1][metric]
                 if val_A == 0 and val_B == 0:
                     continue
-                scr_A = val_A/(val_A+avg_val)
-                scr_B = val_B/(val_B+avg_val)
+                scr_A = val_A/(val_A+median_val)
+                scr_B = val_B/(val_B+median_val)
                 if metric in score_weighting[pos]:
                     scr_A *= score_weighting[pos][metric]
                     scr_B *= score_weighting[pos][metric]
@@ -157,19 +188,35 @@ def checkTeammate(name:str, tag:str):
                 if dto_matchups[pos][i] != dto_target and dto_target["win"] == dto_matchups[pos][i]["win"] and target_score > matchup_scores[pos][i]:
                     rank -= 1
         ranks.append(rank)
-        print(f'[{cnt}] [{"勝" if dto_target["win"] else "敗"}][{dto_target["kills"]}/{dto_target["deaths"]}/{dto_target["assists"]}] \tTeam rank: {rank}/5\t贏線率: {winlane_rate}%')
+        print(f'[{cnt}] [{"勝" if dto_target["win"] else "敗"}][{dto_target["kills"]}/{dto_target["deaths"]}/{dto_target["assists"]}] \t隊伍排名: {rank}/5\t線路優勢: {winlane_rate}% [{dto_target["championName"]}]')
+        
+        html_row = f'''<tr>
+        <td>{cnt}</td>
+        <td>{"勝" if dto_target["win"] else "敗"}</td>
+        <td>{dto_target["kills"]}/{dto_target["deaths"]}/{dto_target["assists"]}</td>
+        <td>{dto_target["championName"]}</td>
+        <td style="color:{"red" if rank > 3 else "black"}">{rank}/5</td>
+        <td style="color:{"red" if winlane_rate < 0 else "black"}">{winlane_rate}%</td>
+        </tr>'''
+        html_rows += html_row
+        
         cnt += 1
         
     print("Summary: ")
     ranks = np.array(ranks)
     mean_rk = round(np.mean(ranks), 2)
     median_rk = np.median(ranks)
-    total_lanewinrate = round((lane_wins/(cnt-1)) * 100, 2) 
-    print(f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 總贏線率: {total_lanewinrate}%", end=" ")
+    total_lanewinrate = round((lane_wins/(cnt-1)) * 100, 2)
+    sum_str = f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 贏線率: {total_lanewinrate}%"
+    print(sum_str, end=" ")
     if max(mean_rk, median_rk) >= 4 or total_lanewinrate < 40:
         print("<==!CAUTION!")
+        html_rows += f"<tr><td colspan='6' bgcolor='pink'><b>{sum_str}</b></td>"
     else:
         print()
+        html_rows += f"<tr><td colspan='6'><b>{sum_str}</b></td>"
+    
+    return html_rows + "</table>"
         
 def get_latest_modified_json_trace(directory):
     latest_modified_time = 0
@@ -202,11 +249,14 @@ def getUsers():
                     break
             if len(summoners) == 5:
                 break
+    tables = []
     for s in summoners:
         name = s.split("-")
-        checkTeammate(name[0], name[1])
+        tables.append(checkTeammate(name[0], name[1], True))
         print()
         print("=" * 50)
+
+    makeHtmlPage(tables)
 
 def ask():
     print("1 -> 檢查個別玩家 | 2 -> 選角即時批量檢查")
@@ -214,7 +264,7 @@ def ask():
     if choice == "1":
         try:
             name = input("Input [name-tag]: ").split("-")
-            checkTeammate(name[0], name[1])
+            makeHtmlPage([checkTeammate(name[0], name[1], False)])
         except Exception as e:
             traceback.print_exc()
     elif choice == "2":
