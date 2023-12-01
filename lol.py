@@ -6,7 +6,7 @@ import os
 from tempfile import gettempdir
 
 bypass = "你的名稱-TAG LINE"
-token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90"
+token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90" # RIOT API token
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
 def makeHtmlPage(tables:list):
