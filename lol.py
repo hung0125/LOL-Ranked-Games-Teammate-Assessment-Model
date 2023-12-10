@@ -43,7 +43,7 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
         return ""
     #每把都是TOP GAP-MDZZ
     username = [name, tag]
-    html_rows = f'''<table><tr><td colspan="6"><a href='https://www.op.gg/summoners/tw/{name}-{tag}'>{name}-{tag}</a></td></tr>
+    html_rows = f'''<table><tr><td colspan="6"><a href='https://www.op.gg/summoners/tw/{name}-{tag}' target="_blank">{name}-{tag}</a></td></tr>
     <tr><th>#</th><th>W/L</th><th>KDA</th><th>英雄</th><th>同隊排名</th><th>線路優勢</th></tr>'''
 
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
