@@ -1,5 +1,5 @@
 # LOL-Ranked Games-Teammate-Assessment-System (LRTAM)
-## 如果勝率可以騙人，那麼實力指標就是騙子剋星
+## 如果勝率可以騙人，那麼就看實力指標
 - 使用 Windows CMD 運行 <br/>
 - 正確運行次序: 開始遊戲客戶端 --> 啟動分析模型 --> 接受一場單/雙排積分 --> 等待隊友全連進聊天室 (沒有"連接中"字眼) --> 使用 option 2
 
