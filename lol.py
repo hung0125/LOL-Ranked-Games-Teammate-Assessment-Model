@@ -43,8 +43,8 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
         return ""
     #每把都是TOP GAP-MDZZ
     username = [name, tag]
-    html_rows = f'''<table><tr><td colspan="6"><a href='https://www.op.gg/summoners/tw/{name}-{tag}' target="_blank">{name}-{tag}</a></td></tr>
-    <tr><th>#</th><th>W/L</th><th>KDA</th><th>英雄</th><th>同隊排名</th><th>線路優勢</th></tr>'''
+    html_rows = f'''<table><tr><td colspan="7"><a href='https://www.op.gg/summoners/tw/{name}-{tag}' target="_blank">{name}-{tag}</a></td></tr>
+    <tr><th>#</th><th>W/L</th><th>KDA</th><th>英雄</th><th>定位</th><th>同隊排名</th><th>線路優勢</th></tr>'''
 
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
     score_weighting = { 
@@ -70,8 +70,8 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
             "killParticipation": 1.5
         }
     }
-
-    metrics_1v1 = ["damageDealtToTurrets", "totalDamageDealtToChampions", "visionScore", "kda"] # these metric can be extreme to some lanes
+    
+    metrics_1v1 = ["damageDealtToTurrets", "totalDamageDealtToChampions", "totalDamageTaken", "visionScore", "kda", "killParticipation"] # these metric can be extreme to some lanes
     metrics_1v9 = ["kda", "killParticipation"] # fair metrics
     challenge_metrics = ["kda", "killParticipation"]
 
@@ -108,14 +108,20 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
         dto_target = None
         dto_matchups = {"TOP": [], "JUNGLE": [], "MIDDLE": [], "BOTTOM": [], "UTILITY": []} # stores participants
         matchup_scores = {"TOP": [0,0], "JUNGLE": [0,0], "MIDDLE": [0,0], "BOTTOM": [0,0], "UTILITY": [0,0]}
+        individual_scores = {"TOP": [0,0], "JUNGLE": [0,0], "MIDDLE": [0,0], "BOTTOM": [0,0], "UTILITY": [0,0]}
 
         for p in dto_participant:
             if p["puuid"] == account_detail["puuid"]:
                 dto_target = p
             if p["teamPosition"]:
                 dto_matchups[p["teamPosition"]].append(p)
+            else:
+                good_match = False
+                 
             if dto_info["gameDuration"] < 800:
                 good_match = False
+            
+            if not good_match:
                 break
 
         if not good_match:
@@ -169,25 +175,29 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
                     continue
                 scr_A = val_A/(val_A+median_val)
                 scr_B = val_B/(val_B+median_val)
-                if metric in score_weighting[pos]:
-                    scr_A *= score_weighting[pos][metric]
-                    scr_B *= score_weighting[pos][metric]
-                matchup_scores[pos][0] += scr_A
-                matchup_scores[pos][1] += scr_B
+                # if metric in score_weighting[pos]:
+                #     scr_A *= score_weighting[pos][metric]
+                #     scr_B *= score_weighting[pos][metric]
+                individual_scores[pos][0] += scr_A
+                individual_scores[pos][1] += scr_B
 
-        target_score = 0
+        # for win lane stats
+        individual_score = 0
         winlane_rate = 0
         for i in range(2):
             if dto_matchups[dto_target["teamPosition"]][i] == dto_target:
+                individual_score = individual_scores[dto_target["teamPosition"]][i]
                 target_score = matchup_scores[dto_target["teamPosition"]][i]
                 opponent_score = matchup_scores[dto_target["teamPosition"]][abs(i-1)]
                 winlane_rate = round((target_score - opponent_score)/opponent_score * 100, 2)
                 if winlane_rate >= 0:
                     lane_wins += 1
+
+        # for overall stats
         rank = 5
         for pos in positions:
             for i in range(2):
-                if dto_matchups[pos][i] != dto_target and dto_target["win"] == dto_matchups[pos][i]["win"] and target_score > matchup_scores[pos][i]:
+                if dto_matchups[pos][i] != dto_target and dto_target["win"] == dto_matchups[pos][i]["win"] and individual_score > individual_scores[pos][i]:
                     rank -= 1
         ranks.append(rank)
         print(f'[{cnt}] [{"勝" if dto_target["win"] else "敗"}][{dto_target["kills"]}/{dto_target["deaths"]}/{dto_target["assists"]}] \t隊伍排名: {rank}/5\t線路優勢: {winlane_rate}% [{dto_target["championName"]}]')
@@ -197,6 +207,7 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
         <td>{"勝" if dto_target["win"] else "敗"}</td>
         <td>{dto_target["kills"]}/{dto_target["deaths"]}/{dto_target["assists"]}</td>
         <td>{dto_target["championName"]}</td>
+        <td>{dto_target["teamPosition"][:3]}</td>
         <td style="color:{"red" if rank > 3 else "black"}">{rank}/5</td>
         <td style="color:{"red" if winlane_rate < 0 else "black"}">{winlane_rate}%</td>
         </tr>'''
@@ -213,10 +224,10 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
     print(sum_str, end=" ")
     if max(mean_rk, median_rk) >= 4 or total_lanewinrate < 40:
         print("<==!CAUTION!")
-        html_rows += f"<tr><td colspan='6' bgcolor='pink'><b>{sum_str}</b></td>"
+        html_rows += f"<tr><td colspan='7' bgcolor='pink'><b>{sum_str}</b></td>"
     else:
         print()
-        html_rows += f"<tr><td colspan='6'><b>{sum_str}</b></td>"
+        html_rows += f"<tr><td colspan='7'><b>{sum_str}</b></td>"
     
     return html_rows + "</table>"
         
