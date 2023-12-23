@@ -49,7 +49,7 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
     positions = ["TOP", "MIDDLE", "JUNGLE", "BOTTOM", "UTILITY"]
     score_weighting = { 
         # Aimed to provide an effective customized metric for each lane 
-        # Score multiplication. All lanes should have same total bonus ratio
+        # Score multiplication. All lanes should have same total bonus ratio (i.e. 100% addition)
         # CC, heal to teammate don't count because its final outcome is still kill participation
         "TOP": {
             "damageDealtToTurrets": 2,
@@ -66,12 +66,13 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
             "killParticipation": 1.5
         },
         "UTILITY": {
-            "visionScore": 1.5,
-            "killParticipation": 1.5
+            "visionScore": 1.33,
+            "killParticipation": 1.33,
+            "totalHealsOnTeammates": 1.33
         }
     }
     
-    metrics_1v1 = ["damageDealtToTurrets", "totalDamageDealtToChampions", "totalDamageTaken", "visionScore", "kda", "killParticipation"] # these metric can be extreme to some lanes
+    metrics_1v1 = ["damageDealtToTurrets", "totalDamageDealtToChampions", "totalDamageTaken", "visionScore", "kda", "killParticipation", "totalHealsOnTeammates"] # these metric can be extreme to some lanes
     metrics_1v9 = ["kda", "killParticipation"] # fair metrics
     challenge_metrics = ["kda", "killParticipation"]
 
