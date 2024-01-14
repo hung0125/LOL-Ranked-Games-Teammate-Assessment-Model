@@ -6,8 +6,8 @@ import os
 from tempfile import gettempdir
 from time import time
 
-bypass = "你的ID-TAG LINE"
-token = "RGAPI-2aca1b74-bd1d-4125-b6db-38f9ad7d7d90" # Riot API token
+bypass = "每把都是TOP GAP-MDZZ"
+token = "RGAPI-f93917e1-bcd7-4009-b1ac-1810e0c8937a"
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
 def makeHtmlPage(tables:list):
@@ -255,7 +255,7 @@ def getUsers():
     trace = loads(raw)["entries"]
     summoners = set()
     for i in range(len(trace)-1, -1, -1):
-        if "ty" in trace[i] and "ur" in trace[i] and trace[i]["ty"] == "Update" and trace[i]["ur"] == "/chat/v5/participants/champ-select":
+        if "ty" in trace[i] and "ur" in trace[i] and trace[i]["ty"] == "Update" and trace[i]["ur"] == "/chat/v5/participants/lol-champ-select":
             obj = loads(trace[i]["dds"])
             for user in obj["participants"]:
                 summoners.add(f"{user['game_name']}-{user['game_tag']}")
