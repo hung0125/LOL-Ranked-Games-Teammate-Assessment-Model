@@ -97,5 +97,3 @@ def getPerformance(nametag:str):
     # result['stats']['rate_of_win_lane'] = str(times_won_lane/10 * 100) + '%'
     print(test)
     return result
-
-# print(dumps(getPerformance("噗啾丸o#TW2")))
