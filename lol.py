@@ -50,7 +50,7 @@ def getOPDataHTML(name:str, tag:str):
     mean_rk = resp['stats']['mean_rank']
     median_rk = resp['stats']['median_rank']
     mean_lane_score = resp['stats']['mean_lane_score']
-    overall = f"平均排名: {mean_rk}, 中位數排名: {median_rk}, 平均對線分數: {mean_lane_score}/100"
+    overall = f"平均排名: {mean_rk}, 中位數排名: {median_rk}<br>平均對線分數: {mean_lane_score}/100"
     if mean_rk > 3 or median_rk > 3:
         html_rows += f"<tr><td colspan='7' bgcolor='pink'><b>{overall}</b></td>"
     else:
@@ -275,7 +275,7 @@ def get_latest_modified_json_trace(directory):
 def getUsers():
     raw = open(get_latest_modified_json_trace(log_path), "rb").read().decode("utf-8")
     raw = raw.strip()
-    raw = raw[:-1] + "]}" # comment this if check without client
+    # raw = raw[:-1] + "]}" # comment this if check without client
 
     trace = loads(raw)["entries"]
     summoners = set()

@@ -47,9 +47,9 @@ def getPerformance(nametag:str):
     id = getId(nametag)
     matches = getMatches(id)
     result = { 'stats': {
-        'mean_rank': 0,
-        'median_rank': 0,
-        'mean_lane_score': 0,
+        'mean_rank': -1,
+        'median_rank': -1,
+        'mean_lane_score': -1,
         # 'rate_of_win_lane': 0,
     }, 'data': []}
     ranks = []
@@ -87,13 +87,16 @@ def getPerformance(nametag:str):
                 result['data'].append(obj)
 
                 ranks.append(obj['op_score_rank'])
-                lane_scores.append(obj['lane_score_target_vs_opponent'])
+                if obj['lane_score_target_vs_opponent'] != None:
+                    lane_scores.append(obj['lane_score_target_vs_opponent'])
                 if stats['lane_score'] != None and stats['lane_score'] > 50:
                     times_won_lane += 1
                 break
-    result['stats']['mean_rank'] = round(mean(np.array(ranks)), 2)
-    result['stats']['median_rank'] = median(np.array(ranks))
-    result['stats']['mean_lane_score'] = round(mean(np.array(lane_scores)), 2)
+    if len(ranks) > 0:
+        result['stats']['mean_rank'] = round(mean(np.array(ranks)), 2)
+        result['stats']['median_rank'] = median(np.array(ranks))
+    if len(lane_scores) > 0:
+        result['stats']['mean_lane_score'] = round(mean(np.array(lane_scores)), 2)
     # result['stats']['rate_of_win_lane'] = str(times_won_lane/10 * 100) + '%'
     print(test)
     return result
