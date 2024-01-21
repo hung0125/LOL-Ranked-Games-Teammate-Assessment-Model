@@ -275,7 +275,7 @@ def get_latest_modified_json_trace(directory):
 def getUsers():
     raw = open(get_latest_modified_json_trace(log_path), "rb").read().decode("utf-8")
     raw = raw.strip()
-    raw = raw[:-1] + "]}" # turn off if check without client
+    raw = raw[:-1] + "]}" # comment this if check without client
 
     trace = loads(raw)["entries"]
     summoners = set()
