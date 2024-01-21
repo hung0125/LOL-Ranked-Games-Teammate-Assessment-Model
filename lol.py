@@ -3,6 +3,7 @@ from json import loads, dumps
 import numpy as np
 import traceback
 import os
+from OPGGModel import getPerformance
 from tempfile import gettempdir
 from time import time
 
@@ -35,6 +36,26 @@ display:flex;
     ts = str(int(time()))
     open(f"{gettempdir()}/lol-team-check_{ts}.html", "wb").write(template.encode("utf-8"))
     os.system(f"{gettempdir()}/lol-team-check_{ts}.html")
+
+def getOPDataHTML(name:str, tag:str):
+    resp = getPerformance(f'{name}#{tag}')
+
+    rks = []
+    for match in resp['data']:
+        rk = match['op_score_rank']
+        rks.append(f'{rk}' if rk < 4 else f'<a style="color:red">{rk}</a>')
+    rks = reversed(rks)
+    html_rows = f"<tr><td colspan='7'><b>OP Score 同隊排名:</b><br>{"➡️".join(rks)}</td></tr>"
+    
+    mean_rk = resp['stats']['mean_rank']
+    median_rk = resp['stats']['median_rank']
+    mean_lane_score = resp['stats']['mean_lane_score']
+    overall = f"平均排名: {mean_rk}, 中位數排名: {median_rk}, 平均對線分數: {mean_lane_score}/100"
+    if mean_rk > 3 or median_rk > 3:
+        html_rows += f"<tr><td colspan='7' bgcolor='pink'><b>{overall}</b></td>"
+    else:
+        html_rows += f"<tr><td colspan='7'><b>{overall}</b></td>"
+    return html_rows
 
 def checkTeammate(name:str, tag:str, bulkmode:bool):
     print(f"Checking: {name}#{tag}")
@@ -223,12 +244,16 @@ def checkTeammate(name:str, tag:str, bulkmode:bool):
     total_lanewinrate = round((lane_wins/(cnt-1)) * 100, 2)
     sum_str = f"平均排名: {mean_rk}/5, 中位數排名: {median_rk}/5, 贏線率: {total_lanewinrate}%"
     print(sum_str, end=" ")
+    
     if max(mean_rk, median_rk) >= 4 or total_lanewinrate < 40:
         print("<==!CAUTION!")
         html_rows += f"<tr><td colspan='7' bgcolor='pink'><b>{sum_str}</b></td>"
     else:
         print()
         html_rows += f"<tr><td colspan='7'><b>{sum_str}</b></td>"
+
+    # opgg data
+    html_rows += getOPDataHTML(name, tag)
     
     return html_rows + "</table>"
         
@@ -250,7 +275,7 @@ def get_latest_modified_json_trace(directory):
 def getUsers():
     raw = open(get_latest_modified_json_trace(log_path), "rb").read().decode("utf-8")
     raw = raw.strip()
-    raw = raw[:-1] + "]}"
+    raw = raw[:-1] + "]}" # turn off if check without client
 
     trace = loads(raw)["entries"]
     summoners = set()
