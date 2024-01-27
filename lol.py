@@ -45,13 +45,13 @@ def getOPDataHTML(name:str, tag:str):
         rk = match['op_score_rank']
         rks.append(f'{rk}' if rk < 4 else f'<a style="color:red">{rk}</a>')
     rks = reversed(rks)
-    html_rows = f"<tr><td colspan='7'><b>OP Score 同隊排名:</b><br>{"➡️".join(rks)}</td></tr>"
+    html_rows = f"<tr><td colspan='7'><b>OP Score 同隊排名 ({'最新'if resp['updated'] else '未更新'}):</b><br>{"➡️".join(rks)}</td></tr>"
     
     mean_rk = resp['stats']['mean_rank']
     median_rk = resp['stats']['median_rank']
     mean_lane_score = resp['stats']['mean_lane_score']
     overall = f"平均排名: {mean_rk}, 中位數排名: {median_rk}<br>平均對線分數: {mean_lane_score}/100"
-    if mean_rk > 3 or median_rk > 3:
+    if mean_rk >= 4 or median_rk >= 4:
         html_rows += f"<tr><td colspan='7' bgcolor='pink'><b>{overall}</b></td>"
     else:
         html_rows += f"<tr><td colspan='7'><b>{overall}</b></td>"
