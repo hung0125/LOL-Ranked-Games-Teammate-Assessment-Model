@@ -24,8 +24,9 @@ def getId(nametag:str):
 
 def renew(sum_id:str) -> bool:
     rq.post(f"{domain2}/summoners/{sum_id}/renewal", headers=headers).text
-    for i in range(3): # check 3 times
+    for i in range(5): # max retry: 5 times; timeout: 1s
         response2 = loads(rq.get(f"{domain2}/summoners/{sum_id}/renewal-status", headers=headers).text)
+        print(f'[OPGG] Update reply: {response2}')
         # print(response2.text)
         if 'message' in response2 and response2['message'] == 'Already renewed.':
             return True
@@ -43,15 +44,16 @@ def getMatchesByNameTag(nametag:str) -> dict:
     id = getId(nametag)
     return getMatches(id)
 
+# public functions
 def getPerformance(nametag:str):
     id = getId(nametag)
     matches = getMatches(id)
     result = { 'stats': {
         'mean_rank': -1,
         'median_rank': -1,
-        'mean_lane_score': -1,
+        'mean_lane_score': -1
         # 'rate_of_win_lane': 0,
-    }, 'data': []}
+    }, 'data': [], 'updated': renew(id)}
     ranks = []
     lane_scores = []
 
