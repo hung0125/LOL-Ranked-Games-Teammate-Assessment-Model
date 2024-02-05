@@ -7,7 +7,7 @@ from OPGGModel import getPerformance
 from tempfile import gettempdir
 from time import time
 
-bypass = "每把都是TOP GAP-MDZZ"
+bypass = "ID-TAG"
 token = "RGAPI-f93917e1-bcd7-4009-b1ac-1810e0c8937a"
 log_path = "D:\\Riot Games\\League of Legends\\Logs\\LeagueClient Logs" # 按需要修改實際路徑，必須是LeagueClient Logs資料夾
 
